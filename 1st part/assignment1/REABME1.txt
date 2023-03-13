@@ -1,0 +1,36 @@
+Anastasia Psarou 2860
+Nikos Lymperopoulos 2812
+1h erg 1h ask
+
+main: 
+    Anoigoume ta arxeia input.txt kai output.txt gia diabasma kai grapsimo antistoixa.
+    Meta meso tis synartisis pipe_init arxikopoioume to buffer. Theoroume to buffer os enan "kikliko" pinaka me kelia arithmou size opou to epomeno keli tou pinakas[size - 1] einai to pinakas[0]. Oi pointers head kai tail arxika koitane sto proto keli tou pinaka. 
+    To head otan grafei enan xaraktira se ena keli paei sto epomeno. Auto simainei oti otan gemisei o buffer to head tha deixnei sto pinakas[0]. 
+    
+    To tail diabazei to keli sto opoio vrisketai kai proxwraei sto epomeno. Gia auto to tail diavazei mexris na sinantisei to head, asxetws me to an i read kalestike logw writeDone i logw gemismatos tou buffer. I read akolouthei tin e3is diadikasia mexri na sinantisei to head : diavase to keli pou koitaei to tail kai proxwra to tail kata 1. Molis teleiwsei to diavasma to tail arxikopoieitai kai koitaei pali sto pinakas[0].
+    
+    H main dimiourgei 2 threads. To thread pou grafei to opoio ektelei tin synartisi write_data kai auto pou diabazei to opoio ektelei tin read_data. 
+    
+write_data:
+    Diabazei enan enan tous xaraktires apo to arxeio input.txt kai tous grafei ston buffer. H write_data kalei tin pipe_write pou grafei ton xaraktira, pou diabastike apo to input.txt, sto buffer. To diabasma apo to input.txt termatizei me ti bohtheia tis synartisis feof.
+    O write_counter einai mia metabliti i opoia xrisimopoieitai gia na ginetai elegxos apo tin write_data an to buffer exei gemisei kai aujanetai kata 1 kathe fora pou diabazetai enas xaraktiras.
+    An gemisei o buffer to write nima "koimatai" kai to read nima "3ipnaei". Auto ginetai me ti boitheia mias metablitis pou exei oristei os global, tin read_sleep. H read_sleep einai 1 otan i read koimatai kai i write leitourgei kai 0 otan i read leitourgei kai i write koimatai.
+    
+pipe_writeDone: 
+    Kaleitai apo tin write_data otan i feof entopisei oti to arxeio eisodou den exei allous char na diabastoun, ara to grapsimo exei teleiwse. Tote i metabliti writeDone ginetai 1, to nima tis write katastrefetai kai arxizei to diabasma h read.
+    
+readdata:
+    Kalei tin pipe_read pou elegxei an yparxoyn stoixeia ston buffer. An yparxoun diabazei enan char kai epistrefei 1 alliws an i pipe_read kalestei enw o buffer einai adeios epistrefei 0. Otan teleiosei to diabasma an write_done == 1 exei teleiwsei i diadikasia grapsimatos kai epistrefoume stin main. Allios, i readdata koimatai kai synexizei i write.
+    
+Meta3i read kai write auto pou tha ginei teleutaio einai i read, giati ta dedomena pou tha exoun graftei tha prepei kai na diabastoun. Ara i read_data prepei prin pethanei na "3ipnisei" tin main. Auto ginetai me ti bohtheia mias metablitis tis main_sleep pou einai 1 oso i main koimatai kai 0 otan einai 3ipnia.
+
+H readdata diavazei ta dedomena apo ton buffer kai ta pernaei sto output.txt.
+Episis xrisimopoieitai to arxeio tsek.c gia na ginei elegxos an ta arxeia input.txt kai to.txt einai idia. 
+
+Dio kiria provlimata pou iparxoun sto programma einai o sigxronismos meta3i tou nimatos write kai tou nimatos read kathws kai i anamoni tis main mexris otou na teleiwsei to programma.
+
+I anamoni tis main ginetai mesw tis metavlitis main_sleep i opoia me to pou 3ekinaei to programma arxikopoieitai mesa stin main me tin timi 1, alla i idia einai global. Afto simvainei dioti afto pou theloume einai i main na dimiourgei ta dio nimata kai meta na mpainei kateftheian se energi anamoni mexri na tin 3ipnisei kapoios. Aftos o kapoios tha einai panta i read kathws i main prepei na 3ipnisei mono afou exei oloklirwthei teleiws i diadikasia grapsimatos kai exei kalestei i writeDone. Otan kai i read ektelesei to teleftaio tis diavasma tote poli apla allazei tin timi tis main_sleep se 0 kathws i metavliti einai global. Gia na apofigoume tin xrisi tou CPU apo tin main oso pio poli mporoume logw tis energis anamonis tis mesa stin while opou i main perimenei simvainei sinexws ena pthread_yield.
+
+Apo tin alli o sigxronismos meta3i nimatos write kai nimatos read ginetai me enan paromoio tropo. I metavliti read_sleep leitourgei opws akrivws i main_sleep. Arxika ginetai 1 etsi wste na koimithei i read kai na mporei na grapsei i write ston buffer, o opoios apotelei krisimo simeio logw antagwnismou. Kati pou paratirisame einai pws otan o buffer exei poli megalo megethos epeidi i write leitourgei poli logika to sistima tou dinei proteraiotita kai tixainei na gemisei o buffer prin kan prolavei to nima read na parei ton cpu kai na koimithei. Gia afto mesa stin sinartisi read_data e3w apo tin while(1) mesa stin opoia ekteleitai i diadikasia diavasmatos iparxei mia energi anamoni vasei tin timi tis read_sleep. Etsi opoiadipote stigmi parei to nima read ton CPU an den exei teleiwsei prwta to nima write, eite epeidi gemise o buffer eite epeidi eftase sto telos tou arxeiou input, tote afto perimenei. Iparxei omws kai mia defteri energi anamoni akrivws idia me tin prwti gia to nima read pou simvainei mesa sti while(1) pou ekteleitai i diadikasia diavasmatos. Afti simvainei afou teleiwsei to nima read to diavasma kai poli apla allazei to idio tin timi tis read_sleep se 1 kai meta mpainei stin energi anamoni. To idio akrivws kanei kai to nima write otan teleiwsei to grapsimo, allazei tin timi tis read_sleep se 0 kai mpainei se energi anamoni. Se ola ta nimata : main/write/read oso afta einai mesa se energi anamoni gia e3oikomisi xronou ginetai pthread_yield kathws gnwrizoume pws efoson to nima vrisketai se energi anamoni den exei kanena logw na xrisimopoiei ton CPU.
+
+Kai oi dio metavlites panw stis opoies ginontai oi energes anamones einai global etsi wste na einai koini mnimi meta3i nimatwn kai na mporei na tis xeirizetai opoio nima prepei kathe fora.
